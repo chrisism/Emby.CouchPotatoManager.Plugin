@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.329
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emby.CouchPotatoManager.Plugin", "Emby.CouchPotatoManager.Plugin\Emby.CouchPotatoManager.Plugin.csproj", "{ABF5C7FD-EE45-49F0-BF9B-F4109A2969A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emby.CouchPotatoManager.Tests", "Emby.CouchPotatoManager.Tests\Emby.CouchPotatoManager.Tests.csproj", "{E8F4D7D1-7448-4DB1-A941-882699BF99ED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ABF5C7FD-EE45-49F0-BF9B-F4109A2969A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABF5C7FD-EE45-49F0-BF9B-F4109A2969A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABF5C7FD-EE45-49F0-BF9B-F4109A2969A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABF5C7FD-EE45-49F0-BF9B-F4109A2969A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8F4D7D1-7448-4DB1-A941-882699BF99ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8F4D7D1-7448-4DB1-A941-882699BF99ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8F4D7D1-7448-4DB1-A941-882699BF99ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8F4D7D1-7448-4DB1-A941-882699BF99ED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {56F757B2-3EB6-4254-95FB-EA242C60DF34}
+	EndGlobalSection
+EndGlobal

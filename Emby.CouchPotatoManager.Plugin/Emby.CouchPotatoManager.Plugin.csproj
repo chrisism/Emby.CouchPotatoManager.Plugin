@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="UI\configuration.html" />
+    <None Remove="UI\couchpotato_icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="UI\configuration.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="UI\couchpotato_icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediaBrowser.Server.Core" Version="4.0.0.2" />
+    <PackageReference Include="System.Memory" Version="4.5.2" />
+  </ItemGroup>
+
+</Project>
