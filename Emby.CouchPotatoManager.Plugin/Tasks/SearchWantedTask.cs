@@ -17,6 +17,8 @@ namespace Emby.CouchPotatoManager.Plugin.Tasks
 
         private readonly ILogger logger;
 
+        private int errorCount = 0;
+
         public SearchWantedTask(IJsonSerializer serializer, ILogger logger)
         {
             this.serializer = serializer;
@@ -28,7 +30,7 @@ namespace Emby.CouchPotatoManager.Plugin.Tasks
             }
             catch (Exception)
             {
-                logger.Warn("Could not load configuration");
+                logger.Warn("[CP Search] Could not load configuration");
             }
         }
 
@@ -55,6 +57,8 @@ namespace Emby.CouchPotatoManager.Plugin.Tasks
 
         public async Task Execute(CancellationToken cancellationToken, IProgress<double> progress)
         {
+            this.errorCount = 0;
+
             const string startCmd = "movie.searcher.full_search";
             const string progressCmd = "movie.searcher.progress";
 
@@ -69,12 +73,12 @@ namespace Emby.CouchPotatoManager.Plugin.Tasks
             double progressCount = 0;
             using (HttpClient client = new HttpClient())
             {
-                this.logger.Info($"Calling {commandUrl}");
+                this.logger.Info($"[CP Search] Calling {commandUrl}");
                 HttpResponseMessage response = await client.GetAsync(new Uri(commandUrl), cancellationToken);
 
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
-                    this.logger.Error($"Failed to call endpoint:{response.StatusCode}");
+                    this.logger.Error($"[CP Search] Failed to call endpoint:{response.StatusCode}");
                     progress.Report(100);
                     return;
                 }
@@ -85,8 +89,18 @@ namespace Emby.CouchPotatoManager.Plugin.Tasks
                     await Task.Delay(delay, cancellationToken);
 
                     cancellationToken.ThrowIfCancellationRequested();
-                    progressCount = await this.executeProgressAsync(cancellationToken, client, progressUrl);
-                    if (progressCount < 0)
+                    try
+                    {
+                        progressCount = await this.executeProgressAsync(cancellationToken, client, progressUrl);
+                        this.logger.Debug($"[CP Search] Called {progressUrl}. Returned progress of {progressCount}");
+                    }
+                    catch (Exception ex)
+                    {
+                        this.errorCount++;
+                        this.logger.ErrorException($"[CP Search] Called {progressUrl}. Error while calling.", ex);
+                    }
+
+                    if (progressCount < 0 || this.errorCount > 10)
                         throw new OperationCanceledException("Progress failure");
                 }
             }
@@ -95,14 +109,16 @@ namespace Emby.CouchPotatoManager.Plugin.Tasks
         }
 
         private async Task<double> executeProgressAsync(CancellationToken cancellationToken, HttpClient client, string progressUrl)
-        {
-            this.logger.Info($"Calling {progressUrl}");
+        {   
             HttpResponseMessage response = await client.GetAsync(new Uri(progressUrl), cancellationToken);
 
             if (response.StatusCode != HttpStatusCode.OK)
                 return -1;
 
             string jsonResult = await response.Content.ReadAsStringAsync();
+
+            if (jsonResult != null && jsonResult.Equals("{\"movie\": false}"))
+                return 100;
 
             ProgressResult result;
             try
@@ -111,12 +127,16 @@ namespace Emby.CouchPotatoManager.Plugin.Tasks
             }
             catch (Exception ex)
             {
-                if (jsonResult.Equals("{\"movie\": false}"))
-                    return 100;
-                this.logger.ErrorException("Failed to parse json", ex);
+                this.logger.ErrorException("[CP Search] Failed to parse json", ex);
                 return -1;
             }
 
+            if (result == null)
+            {
+                this.logger.Error($"[CP Search] Return obj is NULL. Actual content: {jsonResult}");
+                return -1;
+            }
+            
             return (result.Movie.Total - result.Movie.To_Go) / result.Movie.Total * 100;
         }
 

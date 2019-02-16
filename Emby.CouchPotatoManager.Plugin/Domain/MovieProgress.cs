@@ -2,8 +2,8 @@
 {
     public class MovieProgress
     {
-        public int Total { get; set; }
+        public double Total { get; set; }
 
-        public int To_Go { get; set; }
+        public double To_Go { get; set; }
     }
 }

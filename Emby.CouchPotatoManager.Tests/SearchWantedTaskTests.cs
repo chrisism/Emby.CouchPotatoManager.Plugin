@@ -1,8 +1,10 @@
 using System;
 using System.Threading;
 using Emby.CouchPotatoManager.Plugin;
+using Emby.CouchPotatoManager.Plugin.Domain;
 using Emby.CouchPotatoManager.Plugin.Tasks;
 using MediaBrowser.Common.Configuration;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.ClientProtocol;
 using Moq;
 using Xunit;
 
@@ -43,6 +45,23 @@ namespace Emby.CouchPotatoManager.Tests
             await this.target.Execute(token, progress);
 
             // assert
+        }
+
+        [Fact]
+        public void Count_tests()
+        {
+            var result = new ProgressResult
+            {
+                Movie = new MovieProgress
+                {
+                    To_Go = 47,
+                    Total = 71
+                }
+
+            };
+
+            var actual = (result.Movie.Total - result.Movie.To_Go) / result.Movie.Total * 100;
+            Assert.NotEqual(0, actual);
         }
     }
 }
